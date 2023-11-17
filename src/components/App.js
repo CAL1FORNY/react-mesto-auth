@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import Header from "./Header";
 import Main from "./Main";
@@ -30,23 +30,29 @@ function App() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    Promise.all([api.getUserData(), api.getInitialCards()])
-      .then(([userItem, initialCards]) => {
-        setCurrentUser(userItem);
-        setCards(initialCards);
-      })
-      .catch((err) => {
-        console.log(`Возникла глобальная ошибка, ${err}`);
-      });
-  }, []);
+    if (isLoggedIn){
+      Promise.all([api.getUserData(), api.getInitialCards()])
+        .then(([userItem, initialCards]) => {
+          setCurrentUser(userItem);
+          setCards(initialCards);
+        })
+        .catch((err) => {
+          console.log(`Возникла глобальная ошибка, ${err}`);
+        });
+      };
+    }, [isLoggedIn]);
 
-  useEffect( () => {
+  const tokenCheck = useCallback(() => {
     const userToken = localStorage.getItem('token')
     if (userToken) { apiAuth.tokenVerification(userToken)
         .then( (res) => { setEmail(res.data.email); setIsLoggedIn(true); navigate.push('/') })
         .catch( (err) => { console.log(`Возникла ошибка верификации токена, ${err}`) })
     }
-  }, [navigate, isLoggedIn])
+  }, [navigate])
+
+  useEffect(() => {
+    tokenCheck();
+  }, [tokenCheck]);
 
   function handleEditAvatarClick() {
     setIsEditAvatarPopupOpen(true);
