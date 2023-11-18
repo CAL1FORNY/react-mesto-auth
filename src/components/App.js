@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { Route, Routes, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { Route, Switch, useHistory } from 'react-router-dom';
 import Header from "./Header";
 import Main from "./Main";
 import Footer from "./Footer";
@@ -27,7 +27,7 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [status, setStatus] = useState(false);
   const [tooltipOpen, setTooltipOpen] = useState(false);
-  const navigate = useNavigate();
+  const history = useHistory();
 
   useEffect(() => {
     if (isLoggedIn){
@@ -42,17 +42,17 @@ function App() {
       };
     }, [isLoggedIn]);
 
-  const tokenCheck = useCallback(() => {
+  function checkToken() {
     const userToken = localStorage.getItem('token')
     if (userToken) { apiAuth.tokenVerification(userToken)
-        .then( (res) => { setEmail(res.data.email); setIsLoggedIn(true); navigate.push('/') })
+        .then( (res) => { setEmail(res.data.email); setIsLoggedIn(true); history.push('/') })
         .catch( (err) => { console.log(`Возникла ошибка верификации токена, ${err}`) })
     }
-  }, [navigate])
+  };
 
   useEffect(() => {
-    tokenCheck();
-  }, [tokenCheck]);
+    checkToken()
+  }, [history]);
 
   function handleEditAvatarClick() {
     setIsEditAvatarPopupOpen(true);
@@ -160,7 +160,7 @@ function App() {
           localStorage.setItem('token', res.token);
           setEmail(email);
           setIsLoggedIn(true);
-          navigate.push('/');
+          history.push('/');
         }
       })
       .catch( (err) => { console.log(`Возникла ошибка при авторизации, ${err}`); setTooltipOpen(true); setStatus(false) })
@@ -176,7 +176,7 @@ function App() {
           email = { email }
           isLogout = { handleLogout }
         />
-        <Routes>
+        <Switch>
           <ProtectedRoute exact path='/'
             isLoggedIn = { isLoggedIn }
             component = { Main }
@@ -201,7 +201,7 @@ function App() {
               onClose = { closeAllPopups }
               status = { status } />
           </Route>
-        </Routes>
+        </Switch>
         <Footer />
         <PopupEditAvatar
           isOpen={isEditAvatarPopupOpen}

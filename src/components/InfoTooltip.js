@@ -1,14 +1,14 @@
 import React from 'react';
 import success from '../images/success.svg';
 import error from '../images/error.svg';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useHistory } from 'react-router-dom';
 
 function InfoTooltip (props) {
   const location = useLocation();
-  const navigate = useNavigate();
+  const history = useHistory();
   function redirectPopup () {
     if (props.status) { props.onClose()
-      if (location.pathname === '/sign-up') { navigate.push('/sign-in') }
+      if (location.pathname === '/sign-up') { history.push('/sign-in') }
     }
     props.onClose();
   }

@@ -1,5 +1,5 @@
 import headerLogo from "../images/logo.svg";
-import { Link, Route, Routes } from 'react-router-dom';
+import { Link, Route } from 'react-router-dom';
 
 function Header(props) {
   return (
@@ -13,14 +13,12 @@ function Header(props) {
           </>
         ) : (
           <>
-          <Routes>
             <Route path='/sign-up'>
               <Link to='/sign-in' className="header__menu-item">Вход</Link>
             </Route>
             < Route path='/sign-in' >
               <Link to='/sign-up' className="header__menu-item">Регистрация</Link>
             </Route>
-          </Routes>
           </>
         )}
       </div>
