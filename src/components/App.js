@@ -42,17 +42,13 @@ function App() {
       };
     }, [isLoggedIn]);
 
-  function checkToken() {
+  useEffect(() => {
     const userToken = localStorage.getItem('token')
     if (userToken) { apiAuth.tokenVerification(userToken)
         .then( (res) => { setEmail(res.data.email); setIsLoggedIn(true); history.push('/') })
-        .catch( (err) => { console.log(`Возникла ошибка верификации токена, ${err}`) })
+        .catch( (err) => { localStorage.removeItem('jwt'); console.log(`Возникла ошибка верификации токена, ${err}`) })
     }
-  };
-
-  useEffect(() => {
-    checkToken()
-  }, [history]);
+  }, [history])
 
   function handleEditAvatarClick() {
     setIsEditAvatarPopupOpen(true);
